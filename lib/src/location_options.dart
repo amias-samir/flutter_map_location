@@ -21,7 +21,7 @@ typedef LocationButtonBuilder = Widget Function(BuildContext context,
 typedef LocationMarkerBuilder = Marker Function(
     BuildContext context, LatLngData ld, ValueNotifier<double?> heading);
 
-class LocationOptions extends LayerOptions {
+class LocationOptions implements LayerOptions {
   LocationOptions(this.buttonBuilder,
       {this.onLocationUpdate,
       this.onLocationRequested,

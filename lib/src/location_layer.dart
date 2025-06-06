@@ -19,7 +19,7 @@ LocationMarkerBuilder _defaultMarkerBuilder =
   final double diameter = ld.highAccuracy() ? 60.0 : 120.0;
   return Marker(
     point: ld.location,
-    builder: (_) => LocationMarker(ld, heading),
+    child: LocationMarker(ld, heading),
     height: diameter,
     width: diameter,
     rotate: false,
@@ -27,12 +27,11 @@ LocationMarkerBuilder _defaultMarkerBuilder =
 };
 
 class LocationLayer extends StatefulWidget {
-  const LocationLayer(this.options, this.map, this.stream, {Key? key})
-      : super(key: key);
+  const LocationLayer(this.options, this.map, this.stream, {super.key});
 
   final LocationOptions options;
   final MapState map;
-  final Stream<Null> stream;
+  final Stream<void> stream;
 
   @override
   _LocationLayerState createState() => _LocationLayerState();
@@ -54,7 +53,7 @@ class _LocationLayerState extends State<LocationLayer>
     super.initState();
     _controller = widget.options.controller as LocationControllerImpl? ??
         LocationController() as LocationControllerImpl;
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     if (widget.options.initiallyRequest) {
       _locationRequested = true;
       _initOnLocationUpdateSubscription();
@@ -65,7 +64,7 @@ class _LocationLayerState extends State<LocationLayer>
   void dispose() {
     _locationSub?.cancel();
     _controller.dispose();
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -110,8 +109,7 @@ class _LocationLayerState extends State<LocationLayer>
               final Marker marker = customBuilder != null
                   ? customBuilder(context, ld, _heading)
                   : _defaultMarkerBuilder(context, ld, _heading);
-              return MarkerLayerWidget(
-                  options: MarkerLayerOptions(markers: <Marker>[marker]));
+              return MarkerLayer(markers: <Marker>[marker]);
             }),
         widget.options.buttonBuilder(context, _serviceStatus, () async {
           // Check if there is no location subscription, no location value or the location service is off.

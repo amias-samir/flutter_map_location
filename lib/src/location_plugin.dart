@@ -5,10 +5,13 @@ import 'package:flutter_map/plugin_api.dart';
 import 'location_layer.dart';
 import 'location_options.dart';
 
-class LocationPlugin extends MapPlugin {
+class LocationPlugin implements FlutterMapPlugin {
   @override
-  Widget createLayer(
-      LayerOptions options, MapState mapState, Stream<Null> stream) {
+  Widget createLayer({
+    required LayerOptions options,
+    required MapState mapState,
+    required Stream<void> stream,
+  }) {
     if (options is LocationOptions) {
       return LocationLayer(options, mapState, stream);
     }
