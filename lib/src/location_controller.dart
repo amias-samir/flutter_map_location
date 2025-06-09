@@ -7,7 +7,7 @@ import 'package:latlong2/latlong.dart';
 
 class LocationControllerImpl implements LocationController {
   final StreamController<LatLngData> _controller =
-      StreamController<LatLngData>.broadcast();
+  StreamController<LatLngData>.broadcast();
   StreamSubscription<Position>? _onLocationChangedSub;
   StreamSubscription<CompassEvent>? _compassEventsSub;
 
@@ -45,9 +45,9 @@ class LocationControllerImpl implements LocationController {
   Future<bool> requestPermissions() async {
     if (await Geolocator.checkPermission() == LocationPermission.denied) {
       if (<LocationPermission>[
-            LocationPermission.always,
-            LocationPermission.whileInUse
-          ].contains(await Geolocator.requestPermission()) ==
+        LocationPermission.always,
+        LocationPermission.whileInUse
+      ].contains(await Geolocator.requestPermission()) ==
           false) {
         return Future<bool>.value(false);
       }
@@ -55,23 +55,23 @@ class LocationControllerImpl implements LocationController {
     return Future<bool>.value(true);
   }
 
-  Stream<LatLngData> subscribePosition(
-      Duration intervalDuration, LocationAccuracy locationAccuracy) {
+  Stream<LatLngData> subscribePosition( LocationAccuracy locationAccuracy) {
     _isSubscribed = true;
     _onLocationChangedSub = Geolocator.getPositionStream(
-            locationSettings: LocationSettings(
-                accuracy: locationAccuracy,
-                distanceFilter: 0,
-                timeLimit: intervalDuration))
-        .listen((Position ld) {
-      _controller
-          .add(LatLngData(LatLng(ld.latitude, ld.longitude), ld.accuracy));
-    }, onError: (Object error) {
-      _controller.addError(error);
-    }, onDone: () {
-      _isSubscribed = false;
-      _controller.done;
-    });
+      locationSettings: LocationSettings(accuracy: locationAccuracy),
+    ).listen(
+          (Position ld) {
+        _controller
+            .add(LatLngData(LatLng(ld.latitude, ld.longitude), ld.accuracy));
+      },
+      onError: (Object error) {
+        _controller.addError(error);
+      },
+      onDone: () {
+        _isSubscribed = false;
+        _controller.done;
+      },
+    );
 
     return _controller.stream.asBroadcastStream();
   }

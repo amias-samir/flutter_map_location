@@ -7,8 +7,10 @@ import '../widgets/drawer.dart';
 class DefaultPage extends StatefulWidget {
   static const String route = '/';
 
+  const DefaultPage({super.key});
+
   @override
-  _DefaultPageState createState() => _DefaultPageState();
+  State<DefaultPage> createState() => _DefaultPageState();
 }
 
 class _DefaultPageState extends State<DefaultPage> {
@@ -25,33 +27,27 @@ class _DefaultPageState extends State<DefaultPage> {
         body: Center(
           child: FlutterMap(
             mapController: mapController,
-            options: MapOptions(
-              plugins: <MapPlugin>[
-                // USAGE NOTE 2: Add the plugin
-                LocationPlugin(),
-              ],
-            ),
-            layers: <LayerOptions>[
-              TileLayerOptions(
+            options: MapOptions(),
+            children: [
+              TileLayer(
                 urlTemplate:
-                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                 subdomains: <String>['a', 'b', 'c'],
               ),
-            ],
-            nonRotatedLayers: <LayerOptions>[
-              // USAGE NOTE 3: Add the options for the plugin
-              LocationOptions(
-                locationButton(),
-                onLocationUpdate: (LatLngData? ld) {
-                  print(
-                      'Location updated: ${ld?.location} (accuracy: ${ld?.accuracy})');
-                },
-                onLocationRequested: (LatLngData? ld) {
-                  if (ld == null) {
-                    return;
-                  }
-                  mapController.move(ld.location, 16.0);
-                },
+              LocationLayer(
+                LocationOptions(
+                  locationButton(),
+                  onLocationUpdate: (LatLngData? ld) {
+                    print(
+                        'Location updated: ${ld?.location} (accuracy: ${ld?.accuracy})');
+                  },
+                  onLocationRequested: (LatLngData? ld) {
+                    if (ld == null) {
+                      return;
+                    }
+                    mapController.move(ld.location, 16.0);
+                  },
+                ),
               ),
             ],
           ),

@@ -9,8 +9,10 @@ import '../widgets/drawer.dart';
 class ControllerPage extends StatefulWidget {
   static const String route = 'controller';
 
+  const ControllerPage({super.key});
+
   @override
-  _ControllerPageState createState() => _ControllerPageState();
+  State<ControllerPage> createState() => _ControllerPageState();
 }
 
 class _ControllerPageState extends State<ControllerPage> {
@@ -26,54 +28,52 @@ class _ControllerPageState extends State<ControllerPage> {
         drawer: buildDrawer(context, ControllerPage.route),
         body: Center(
             child: Column(children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: <Widget>[
-                ElevatedButton(
-                  onPressed: () {
-                    print('Unsubscribe');
-                    _locationController.unsubscribe();
-                  },
-                  child: const Text('Unsubscribe'),
-                )
-              ],
-            ),
-          ),
-          Flexible(
-            child: FlutterMap(
-              mapController: _mapController,
-              options: MapOptions(
-                plugins: <MapPlugin>[
-                  LocationPlugin(),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: <Widget>[
+                    ElevatedButton(
+                      onPressed: () {
+                        print('Unsubscribe');
+                        _locationController.unsubscribe();
+                      },
+                      child: const Text('Unsubscribe'),
+                    )
+                  ],
+                ),
               ),
-              layers: <LayerOptions>[
-                TileLayerOptions(
-                  urlTemplate:
+              Flexible(
+                child: FlutterMap(
+                  mapController: _mapController,
+                  options: const MapOptions(),
+                  children: [
+                    TileLayer(
+                      urlTemplate:
                       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  subdomains: <String>['a', 'b', 'c'],
+                      subdomains: const <String>['a', 'b', 'c'],
+                    ),
+                    LocationLayer(
+                      LocationOptions(
+                        locationButton(),
+                        controller: _locationController,
+                        onLocationUpdate: (LatLngData? ld) {
+                          print(
+                              'Location updated: ${ld?.location} (accuracy: ${ld?.accuracy})');
+                        },
+                        onLocationRequested: (LatLngData? ld) {
+                          if (ld == null) {
+                            return;
+                          }
+                          _mapController.move(ld.location, 16.0);
+                        },
+                      ),
+                    )
+                  ],
+
+
                 ),
-              ],
-              nonRotatedLayers: <LayerOptions>[
-                LocationOptions(
-                  locationButton(),
-                  controller: _locationController,
-                  onLocationUpdate: (LatLngData? ld) {
-                    print(
-                        'Location updated: ${ld?.location} (accuracy: ${ld?.accuracy})');
-                  },
-                  onLocationRequested: (LatLngData? ld) {
-                    if (ld == null) {
-                      return;
-                    }
-                    _mapController.move(ld.location, 16.0);
-                  },
-                ),
-              ],
-            ),
-          )
-        ])));
+              )
+            ])));
   }
 
   LocationButtonBuilder locationButton() {

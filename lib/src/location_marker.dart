@@ -8,7 +8,7 @@ double _degree2Radian(double degree) {
 }
 
 class LocationMarker extends StatelessWidget {
-  const LocationMarker(this.ld, this.heading, {super.key});
+  const LocationMarker(this.ld, this.heading, {Key? key}) : super(key: key);
 
   static final CustomPainter headingerPainter = LocationMarkerHeading();
   final LatLngData ld;
